@@ -8,10 +8,10 @@ import matplotlib.pyplot as plt
 # Título del dashboard
 st.title("Dificultad para Autocontrol según el Género")
 
-# Cargar los datos
+# Cargar los datos desde archivo Excel
 @st.cache_data
 def cargar_datos():
-    return pd.read_csv("datos.csv")
+    return pd.read_excel("1.xlsx")
 
 df = cargar_datos()
 
