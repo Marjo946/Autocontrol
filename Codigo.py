@@ -1,36 +1,33 @@
 import streamlit as st
 import pandas as pd
-import seaborn as sns
 import matplotlib.pyplot as plt
 
+# Título
 st.title("Dificultad para Autocontrol según el Género")
 
-# Cargar los datos desde 'Datos.csv'
+# Cargar datos desde CSV
 @st.cache_data
 def cargar_datos():
     try:
         df = pd.read_csv("Datos.csv")
-        # Validar que existan las columnas necesarias
         if 'Genero' not in df.columns or 'DificultadParaAutocontrol' not in df.columns:
-            st.error("❌ Las columnas 'Genero' y 'DificultadParaAutocontrol' no se encuentran en el archivo.")
-            return pd.DataFrame()  # Retorna un DataFrame vacío
+            st.error("❌ Faltan las columnas necesarias: 'Genero' o 'DificultadParaAutocontrol'.")
+            return pd.DataFrame()
         return df
     except Exception as e:
-        st.error(f"Error al cargar los datos: {e}")
+        st.error(f"Error al cargar Datos.csv: {e}")
         return pd.DataFrame()
 
 df = cargar_datos()
 
 if not df.empty:
-    # Renombrar los valores para mejor visualización
     df['Genero'] = df['Genero'].replace({1: 'Hombre', 2: 'Mujer'})
     df['DificultadParaAutocontrol'] = df['DificultadParaAutocontrol'].replace({0: 'Ausente', 1: 'Presente'})
 
-    # Mostrar los datos si el usuario lo desea
     if st.checkbox("Mostrar datos"):
         st.write(df[['Genero', 'DificultadParaAutocontrol']])
 
-    # Conteo por género
+    # Conteo
     conteo = df.groupby(['Genero', 'DificultadParaAutocontrol']).size().unstack().fillna(0)
 
     st.subheader("Distribución de la dificultad para autocontrol por género")
@@ -42,7 +39,7 @@ if not df.empty:
     plt.title("Dificultad para autocontrol por género")
     st.pyplot(fig)
 
-    # Porcentaje
+    # Porcentajes
     st.subheader("Porcentaje de dificultad para autocontrol por género")
     porcentaje = conteo.div(conteo.sum(axis=1), axis=0) * 100
     st.dataframe(porcentaje.round(2))
