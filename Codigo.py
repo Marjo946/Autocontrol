@@ -8,10 +8,19 @@ import matplotlib.pyplot as plt
 # Título del dashboard
 st.title("Dificultad para Autocontrol según el Género")
 
-# Cargar datos desde CSV
+# Cargar los datos desde 'Datos.csv'
 @st.cache_data
 def cargar_datos():
-    return pd.read_csv("1.xlsx - Hoja 1.csv")
+    try:
+        df = pd.read_csv("Datos.csv")
+        # Validar que existan las columnas necesarias
+        if 'Genero' not in df.columns or 'DificultadParaAutocontrol' not in df.columns:
+            st.error("❌ Las columnas 'Genero' y 'DificultadParaAutocontrol' no se encuentran en el archivo.")
+            return pd.DataFrame()  # Retorna un DataFrame vacío
+        return df
+    except Exception as e:
+        st.error(f"Error al cargar los datos: {e}")
+        return pd.DataFrame()
 
 df = cargar_datos()
 
